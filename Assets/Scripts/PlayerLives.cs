@@ -3,47 +3,73 @@ using UnityEngine.UI;
 
 public class PlayerLives : MonoBehaviour
 {
-    public int lives = 3; // Total lives
+    public int lives = 3; // Player's initial number of lives
     public Image[] livesUI; // UI elements to represent lives
-    public GameObject explosionPrefab ;
+    public GameObject explosionPrefab; // Explosion effect prefab
+    public GameOverManager gameOverManager; // Reference to the GameOverManager script
+    private bool isDead = false; // To ensure death logic is executed once
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private void Start()
     {
-        // Optional: Ensure all livesUI elements are enabled at the start
-        for (int i = 0; i < livesUI.Length; i++)
-        {
-            livesUI[i].enabled = i < lives;
-        }
+        // Ensure lives UI matches the player's initial lives
+        UpdateLivesUI();
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.collider.gameObject.tag == "Enemy")
+        if (collision.collider.CompareTag("Enemy"))
         {
             Destroy(collision.collider.gameObject); // Destroy the enemy
-            
-            lives -= 1; // Decrease the player's lives
+
+            // Decrease lives
+            lives -= 1;
 
             // Update the lives UI
-            for (int i = 0; i < livesUI.Length; i++)
-            {
-                if (i < lives)
-                {
-                    livesUI[i].enabled = true; // Show remaining lives
-                }
-                else
-                {
-                    livesUI[i].enabled = false; // Hide lost lives
-                }
-            }
+            UpdateLivesUI();
 
-            // Check if lives are exhausted
-            if (lives <= 0)
+            // Handle player death
+            if (lives <= 0 && !isDead)
             {
-                Destroy(gameObject); // Destroy the player's ship
-                Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+                isDead = true;
+                HandlePlayerDeath();
             }
+        }
+    }
+
+    private void UpdateLivesUI()
+    {
+        for (int i = 0; i < livesUI.Length; i++)
+        {
+            if (i < lives)
+            {
+                livesUI[i].enabled = true; // Show life icon
+            }
+            else
+            {
+                livesUI[i].enabled = false; // Hide life icon
+            }
+        }
+    }
+
+    private void HandlePlayerDeath()
+    {
+        // Trigger explosion
+        if (explosionPrefab != null)
+        {
+            Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+        }
+
+        // Destroy the player game object
+        Destroy(gameObject);
+
+        // Notify the GameOverManager to handle the game over logic
+        if (gameOverManager != null)
+        {
+            gameOverManager.TriggerGameOver();
+        }
+        else
+        {
+            Debug.LogWarning("GameOverManager is not assigned in the PlayerLives script!");
         }
     }
 }

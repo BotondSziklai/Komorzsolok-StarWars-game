@@ -3,7 +3,7 @@
 ## Table of Contents
 1. [Introduction](#introduction)
 2. [Scenes](#scenes)
-3. [Level Data](#maze-and-level-data)
+3. [Level Data](#level-data)
 4. [Asset Access Documentation](#asset-access-documentation)
 5. [Important Files and Folders](#important-files-and-folders)
 6. [Testing](#testing)

@@ -2,51 +2,49 @@ using UnityEngine;
 
 public class BossBehavior : MonoBehaviour
 {
-    public float minY; // Minimum Y position for random movement
-    public float maxY; // Maximum Y position for random movement
-    public float minSpeed = 1f; // Minimum speed for movement
-    public float maxSpeed = 3f; // Maximum speed for movement
-    public GameObject laserPrefab; // Laser prefab to be fired
-    public Transform firePoint; // Position where the laser spawns
-    public float fireInterval = 2f; // Time between shots
+    public LevelData nextLevelData; // Data for the next level
+    public float minY; // Minimum Y position for movement
+    public float maxY; // Maximum Y position for movement
+    public float minSpeed = 1f; // Minimum movement speed
+    public float maxSpeed = 3f; // Maximum movement speed
+    public GameObject laserPrefab; // Laser prefab for attacks
+    public Transform firePoint; // Laser spawn point
+    public float fireInterval = 2f; // Time between laser shots
 
-    public int maxHealth = 20; // Max health for the boss
+    public int maxHealth = 20; // Maximum health of the boss
     private int currentHealth; // Current health of the boss
-    private bool hasBoostedFireRate = false; // Whether the fire rate has been boosted
-    public float boostedFireInterval = 1f; // Fire rate when boosted
+    public int GetCurrentHealth()
+    {
+        return currentHealth;
+    }
+    private bool hasBoostedFireRate = false; // Tracks if fire rate has been boosted
+    public float boostedFireInterval = 1f; // Fire interval after boost
     public GameObject explosionPrefab; // Explosion effect on death
-    public GameObject healthbar; // The health bar object
+    public GameObject healthbar; // Boss health bar UI
 
-    private float targetY; // Target Y position
-    private float speed; // Current speed
-    private float nextMoveTime; // Time when the boss should pick a new position
-    private float nextFireTime; // Time when the next shot will be fired
+    private float targetY; // Target Y position for movement
+    private float speed; // Current movement speed
+    private float nextMoveTime; // Next time to change position
+    private float nextFireTime; // Next time to fire a laser
 
     void Start()
     {
-        // Set initial health
-        currentHealth = maxHealth;
-
-        // Initialize movement and firing timers
-        SetRandomTargetPositionAndSpeed();
-        nextMoveTime = Time.time + 1f; // Boss will move every second
-        nextFireTime = Time.time + fireInterval;
+        currentHealth = maxHealth; // Initialize health
+        SetRandomTargetPositionAndSpeed(); // Set initial movement
+        nextMoveTime = Time.time + 1f; // Initial movement delay
+        nextFireTime = Time.time + fireInterval; // Initial fire delay
     }
 
     void Update()
     {
-        // Check if it's time to move
         if (Time.time >= nextMoveTime)
         {
-            SetRandomTargetPositionAndSpeed();
-            nextMoveTime = Time.time + 1f; // Schedule the next movement in 1 second
+            SetRandomTargetPositionAndSpeed(); // Change position
+            nextMoveTime = Time.time + 1f; // Reset movement timer
         }
 
-        // Smoothly move the boss to the target position
-        MoveBoss();
-
-        // Fire lasers at regular intervals
-        FireLaser();
+        MoveBoss(); // Move the boss
+        FireLaser(); // Handle firing
     }
 
     private void MoveBoss()
@@ -57,73 +55,75 @@ public class BossBehavior : MonoBehaviour
 
     private void SetRandomTargetPositionAndSpeed()
     {
-        // Generate a random target position within bounds
-        targetY = Random.Range(minY, maxY);
-        speed = Random.Range(minSpeed, maxSpeed); // Set a random speed
+        targetY = Random.Range(minY, maxY); // Set random Y position
+        speed = Random.Range(minSpeed, maxSpeed); // Set random speed
     }
 
     private void FireLaser()
     {
-        if (Time.time >= nextFireTime)
+        if (Time.time >= nextFireTime && laserPrefab != null && firePoint != null)
         {
-            if (laserPrefab != null && firePoint != null)
-            {
-                Instantiate(laserPrefab, firePoint.position, Quaternion.identity);
-            }
-
-            nextFireTime = Time.time + fireInterval;
+            Instantiate(laserPrefab, firePoint.position, Quaternion.identity); // Fire laser
+            nextFireTime = Time.time + fireInterval; // Reset fire timer
         }
     }
 
     public void TakeDamage(int damage)
     {
-        currentHealth -= damage;
+        currentHealth -= damage; // Reduce health
 
-        // Update the health bar if it exists
         if (healthbar != null)
         {
             Healthbar healthbarComponent = healthbar.GetComponent<Healthbar>();
             if (healthbarComponent != null)
             {
-                healthbarComponent.SetHealth(currentHealth);
+                healthbarComponent.SetHealth(currentHealth); // Update health bar
             }
         }
 
-        // If health drops below 50%, increase fire rate
         if (currentHealth <= maxHealth / 2 && !hasBoostedFireRate)
         {
-            BoostFireRate();
+            BoostFireRate(); // Increase fire rate at half health
         }
 
-        // If health is 0, destroy the boss
         if (currentHealth <= 0)
         {
-            Die();
+            Die(); // Destroy boss if health is 0
         }
     }
 
     private void BoostFireRate()
     {
         hasBoostedFireRate = true;
-        fireInterval = boostedFireInterval;
+        fireInterval = boostedFireInterval; // Reduce fire interval
         Debug.Log("Boss firing rate increased!");
     }
 
+    public GameObject levelCompleteUI; // Level completion UI
+    public LevelData currentLevelData; // Current level data
+
     private void Die()
     {
-        // Explosion effect
         if (explosionPrefab != null)
         {
-            Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+            Instantiate(explosionPrefab, transform.position, Quaternion.identity); // Spawn explosion effect
         }
 
-        // Destroy the health bar
+        LevelCompleteManager levelCompleteManager = FindObjectOfType<LevelCompleteManager>();
+        if (levelCompleteManager != null)
+        {
+            levelCompleteManager.ShowLevelComplete(); // Notify level completion
+        }
+        else
+        {
+            Debug.LogError("LevelCompleteManager not found!");
+        }
+
         if (healthbar != null)
         {
-            Destroy(healthbar);
+            Destroy(healthbar); // Remove health bar
         }
 
-        // Destroy the boss
-        Destroy(gameObject);
+        Destroy(gameObject); // Destroy the boss
     }
 }

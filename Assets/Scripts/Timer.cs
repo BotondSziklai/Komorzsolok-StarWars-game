@@ -1,13 +1,15 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class Timer : MonoBehaviour
 {
     [Header("UI Elements")]
     [SerializeField] private TextMeshProUGUI timerText;
-    [SerializeField] private TextMeshProUGUI pauseText;
+    [SerializeField] private GameObject pauseMenu; // The entire Pause Menu panel
     [SerializeField] private Button continueButton;
+    [SerializeField] private Button backToMainMenuButton;
 
     [Header("Boss Settings")]
     [SerializeField] private GameObject boss; // Reference to the boss GameObject in the scene
@@ -25,14 +27,19 @@ public class Timer : MonoBehaviour
     {
         elapsedTime = 0f;
 
-        if (pauseText != null) pauseText.gameObject.SetActive(false);
+        if (pauseMenu != null) pauseMenu.SetActive(false); // Pause Menu starts inactive
+
         if (continueButton != null)
         {
-            continueButton.gameObject.SetActive(false);
-            continueButton.onClick.AddListener(ResumeGame);
+            continueButton.onClick.AddListener(ResumeGame); // Set up the Continue button
         }
 
-        // Make the boss and health bar invisible at the start
+        if (backToMainMenuButton != null)
+        {
+            backToMainMenuButton.onClick.AddListener(BackToMainMenu); // Set up the Back to Main Menu button
+        }
+
+        // Boss and health bar invisible at the start
         if (boss != null) boss.SetActive(false);
         if (healthbar != null) healthbar.SetActive(false);
     }
@@ -89,8 +96,7 @@ public class Timer : MonoBehaviour
         isPaused = true;
         Time.timeScale = 0f;
 
-        if (pauseText != null) pauseText.gameObject.SetActive(true);
-        if (continueButton != null) continueButton.gameObject.SetActive(true);
+        if (pauseMenu != null) pauseMenu.SetActive(true); // Show the pause menu
     }
 
     private void ResumeGame()
@@ -98,8 +104,13 @@ public class Timer : MonoBehaviour
         isPaused = false;
         Time.timeScale = 1f;
 
-        if (pauseText != null) pauseText.gameObject.SetActive(false);
-        if (continueButton != null) continueButton.gameObject.SetActive(false);
+        if (pauseMenu != null) pauseMenu.SetActive(false); // Hide the pause menu
+    }
+
+    private void BackToMainMenu()
+    {
+        Time.timeScale = 1f; // Reset time scale before leaving the game
+        SceneManager.LoadScene("Main Menu"); // Load the Main Menu scene
     }
 
     public void StopTimer()

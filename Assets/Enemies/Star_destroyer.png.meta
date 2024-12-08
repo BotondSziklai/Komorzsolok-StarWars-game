@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Star_destroyer_0: -8944984259765524222
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

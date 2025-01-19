@@ -4,6 +4,8 @@ public class LaserMovement : MonoBehaviour
 {
     public float speed = 10f; // Speed of the laser
     public GameObject explosionPrefab;
+    public GameObject healthPickupPrefab; // Health pickup prefab
+    public float healthDropChance = 0.1f; // chance to drop health
 
     void Update()
     {
@@ -13,13 +15,31 @@ public class LaserMovement : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        // If the laser collides with an object tagged as "Enemy" (like an asteroid)
+        // If the laser collides with an object tagged as "Enemy" (like an asteroid or Tie Fighter)
         if (collision.gameObject.CompareTag("Enemy"))
         {
-            // Instantiate the explosion at the position of the asteroid (not the laser)
+            // Instantiate the explosion at the position of the enemy (not the laser)
             Instantiate(explosionPrefab, collision.transform.position, Quaternion.identity);
 
-            // Destroy the asteroid (enemy)
+            // chance to spawn a health pickup when an enemy is destroyed
+            if (Random.value < healthDropChance)
+            {
+                GameObject healthPickup = Instantiate(healthPickupPrefab, collision.transform.position, Quaternion.identity);
+                Debug.Log("Health Pickup létrehozva: " + healthPickup.name);
+
+                HealthPickup hpScript = healthPickup.GetComponent<HealthPickup>();
+                if (hpScript != null)
+                {
+                    hpScript.SetSpeed(3f);
+                    Debug.Log("Health Pickup sebessége beállítva.");
+                }
+                else
+                {
+                    Debug.LogError("HealthPickup script HIÁNYZIK az instanciált objektumon!");
+                }
+            }
+
+            // Destroy the enemy
             Destroy(collision.gameObject);
 
             // Destroy the laser

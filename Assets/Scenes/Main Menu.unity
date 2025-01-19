@@ -3526,11 +3526,12 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Level 1:\nNavigate an asteroid field, dodge TIE fighters, collect bonuses,
-    and defeat Darth Vader\u2019s TIE fighter boss.\n\nLevel 2:\nBattle TIE fighter
-    waves near an Imperial base, collect bonuses, and destroy a Star Destroyer boss.\n\nLevel
-    3:\nBreak through the Death Star\u2019s defenses, fight swarming TIE fighters,
-    and defeat the Death Star itself."
+  m_text: "Level 1:\nPilot your X-Wing through the asteroid field. Destroy as many
+    asteroids as possible and dodge the rest to reach the Boss - Darth Vader\u2019s
+    TIE fighter!\n\nLevel 2:\nBattle the TIE fighters! Use your shooting skills from
+    the previous level. Watch out - some will fire back! Survive to defeat the Star
+    Destroyer Boss!\n\nLevel 3:\nThe challenge rises! Fight TIE fighters while dodging
+    asteroids that can damage your ship. Battle through to destroy the Death Star!"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 15a3640682d3f064387966364c5c18a4, type: 2}
   m_sharedMaterial: {fileID: -3748510468279350911, guid: 15a3640682d3f064387966364c5c18a4, type: 2}
@@ -3557,8 +3558,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 45
-  m_fontSizeBase: 45
+  m_fontSize: 41.2
+  m_fontSizeBase: 41.2
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -4615,20 +4616,22 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'Asteroids:
 
-    Avoid or destroy asteroids to progress; destroyed ones
-    may drop bonuses like speed boosts, weapon upgrades, or time reductions.
+    Dodge or destroy the asteroids in your
+
+    X-Wing adventure.
+    Hitting one will cost you a life!
 
 
-    TIE
-    Fighters:
+    TIE Fighters:
 
-    Dodge or defeat attacking Imperial fighters to advance.
+    Fewer than asteroids
+    but deadlier - they shoot back! Take them down to survive.
 
 
     Bonuses:
 
-    Collect
-    bonuses for stronger weapons, faster speed, or reduced completion time.'
+    Destroy
+    asteroids and TIE fighters - some may reward you with extra lives!'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 15a3640682d3f064387966364c5c18a4, type: 2}
   m_sharedMaterial: {fileID: -3748510468279350911, guid: 15a3640682d3f064387966364c5c18a4, type: 2}
@@ -4655,8 +4658,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 45
-  m_fontSizeBase: 45
+  m_fontSize: 48.8
+  m_fontSizeBase: 48.8
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18

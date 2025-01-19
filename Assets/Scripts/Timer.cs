@@ -7,39 +7,39 @@ public class Timer : MonoBehaviour
 {
     [Header("UI Elements")]
     [SerializeField] private TextMeshProUGUI timerText;
-    [SerializeField] private GameObject pauseMenu; // The entire Pause Menu panel
+    [SerializeField] private GameObject pauseMenu;
     [SerializeField] private Button continueButton;
     [SerializeField] private Button backToMainMenuButton;
 
     [Header("Boss Settings")]
-    [SerializeField] private GameObject boss; // Reference to the boss GameObject in the scene
-    [SerializeField] private GameObject healthbar; // Reference to the health bar GameObject
+    [SerializeField] private GameObject boss;
+    [SerializeField] private GameObject healthbar;
 
-    [Header("Asteroid Spawner")]
+    [Header("Spawners")]
     [SerializeField] private AsteroidSpawner asteroidSpawner;
+    [SerializeField] private EnemySpawner enemySpawner; // Hozzáadva az EnemySpawner
 
     private float elapsedTime;
     private bool bossSpawned = false;
     private bool isPaused = false;
-    private bool isGameOver = false; // Track if the game is over
+    private bool isGameOver = false;
 
     void Start()
     {
         elapsedTime = 0f;
 
-        if (pauseMenu != null) pauseMenu.SetActive(false); // Pause Menu starts inactive
+        if (pauseMenu != null) pauseMenu.SetActive(false);
 
         if (continueButton != null)
         {
-            continueButton.onClick.AddListener(ResumeGame); // Set up the Continue button
+            continueButton.onClick.AddListener(ResumeGame);
         }
 
         if (backToMainMenuButton != null)
         {
-            backToMainMenuButton.onClick.AddListener(BackToMainMenu); // Set up the Back to Main Menu button
+            backToMainMenuButton.onClick.AddListener(BackToMainMenu);
         }
 
-        // Boss and health bar invisible at the start
         if (boss != null) boss.SetActive(false);
         if (healthbar != null) healthbar.SetActive(false);
     }
@@ -54,7 +54,7 @@ public class Timer : MonoBehaviour
                 PauseGame();
         }
 
-        if (isPaused || isGameOver) return; // Stop updates if paused or Game Over
+        if (isPaused || isGameOver) return;
 
         elapsedTime += Time.deltaTime;
 
@@ -64,17 +64,23 @@ public class Timer : MonoBehaviour
 
         if (elapsedTime >= 60f && !bossSpawned)
         {
-            StopAsteroidSpawner();
+            StopAllSpawners();
             SpawnBoss();
         }
     }
 
-    private void StopAsteroidSpawner()
+    private void StopAllSpawners()
     {
         if (asteroidSpawner != null)
         {
             asteroidSpawner.StopSpawning();
             asteroidSpawner.enabled = false;
+        }
+
+        if (enemySpawner != null) // Leállítja a Tie Fighterek spawnolását is
+        {
+            enemySpawner.StopSpawning();
+            enemySpawner.enabled = false;
         }
     }
 
@@ -82,11 +88,11 @@ public class Timer : MonoBehaviour
     {
         if (boss != null)
         {
-            boss.SetActive(true); // Activate the boss
+            boss.SetActive(true);
         }
         if (healthbar != null)
         {
-            healthbar.SetActive(true); // Activate the health bar
+            healthbar.SetActive(true);
         }
         bossSpawned = true;
     }
@@ -96,7 +102,7 @@ public class Timer : MonoBehaviour
         isPaused = true;
         Time.timeScale = 0f;
 
-        if (pauseMenu != null) pauseMenu.SetActive(true); // Show the pause menu
+        if (pauseMenu != null) pauseMenu.SetActive(true);
     }
 
     private void ResumeGame()
@@ -104,17 +110,17 @@ public class Timer : MonoBehaviour
         isPaused = false;
         Time.timeScale = 1f;
 
-        if (pauseMenu != null) pauseMenu.SetActive(false); // Hide the pause menu
+        if (pauseMenu != null) pauseMenu.SetActive(false);
     }
 
     private void BackToMainMenu()
     {
-        Time.timeScale = 1f; // Reset time scale before leaving the game
-        SceneManager.LoadScene("Main Menu"); // Load the Main Menu scene
+        Time.timeScale = 1f;
+        SceneManager.LoadScene("Main Menu");
     }
 
     public void StopTimer()
     {
-        isGameOver = true; // Stop the timer when the game ends
+        isGameOver = true;
     }
 }

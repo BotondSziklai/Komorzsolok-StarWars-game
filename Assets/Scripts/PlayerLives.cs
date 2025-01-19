@@ -4,6 +4,7 @@ using UnityEngine.UI;
 public class PlayerLives : MonoBehaviour
 {
     public int lives = 3; // Player's initial number of lives
+    public int maxLives = 3; // Maximum number of lives the player can have
     public Image[] livesUI; // UI elements representing the player's lives
     public GameObject explosionPrefab; // Prefab for the explosion effect
     public GameManager gameManager; // Reference to the GameManager script
@@ -11,6 +12,12 @@ public class PlayerLives : MonoBehaviour
 
     private void Start()
     {
+        if (livesUI == null || livesUI.Length == 0)
+        {
+            Debug.LogError("PlayerLives: livesUI nincs beállítva az Inspectorban!");
+            return; // Ne folytassa, ha nincs UI elem
+        }
+
         UpdateLivesUI(); // Set up the lives UI to match the initial lives count
     }
 
@@ -29,10 +36,26 @@ public class PlayerLives : MonoBehaviour
                 HandlePlayerDeath(); // Handle logic for player death
             }
         }
+        // Check if the player picks up a health pickup
+        else if (collision.collider.CompareTag("HealthPickup"))
+        {
+            if (lives < maxLives) // Ensure lives do not exceed max limit
+            {
+                lives += 1; // Increase player's lives
+                UpdateLivesUI(); // Refresh the lives UI
+            }
+            Destroy(collision.collider.gameObject); // Remove the health pickup from the scene
+        }
     }
 
-    private void UpdateLivesUI()
+    public void UpdateLivesUI()
     {
+        if (livesUI == null || livesUI.Length == 0)
+        {
+            Debug.LogError("UpdateLivesUI: livesUI tömb üres vagy nincs beállítva!");
+            return;
+        }
+
         for (int i = 0; i < livesUI.Length; i++)
         {
             // Enable or disable life icons based on remaining lives
